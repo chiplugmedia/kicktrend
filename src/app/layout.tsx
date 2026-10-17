@@ -5,7 +5,22 @@ import { getCategories } from "@/app/actions/category-actions";
 import { getSiteSettings } from "@/lib/settings";
 import { SiteShell } from "@/components/SiteShell";
 import { AdSenseSnippetInjector } from "@/components/AdSenseSnippetInjector";
+import { Inter, Roboto } from "next/font/google";
 import "./globals.css";
+
+const inter = Inter({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800", "900"],
+  variable: "--font-inter",
+  display: "swap",
+});
+
+const roboto = Roboto({
+  subsets: ["latin"],
+  weight: ["400", "500", "700"],
+  variable: "--font-roboto",
+  display: "swap",
+});
 
 export async function generateMetadata(): Promise<Metadata> {
   const settings = await getSiteSettings();
@@ -51,7 +66,7 @@ export default async function RootLayout({
   ]);
 
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" className={`${inter.variable} ${roboto.variable}`} suppressHydrationWarning>
       <head>
         {/* Conditional Google AdSense Script - Loaded ONLY when site is approved */}
         {settings.adsenseApproved && !settings.adsenseSnippet && (
