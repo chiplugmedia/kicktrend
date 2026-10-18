@@ -1,10 +1,15 @@
 
+SET FOREIGN_KEY_CHECKS = 0;
 DROP TABLE IF EXISTS `Like`;
 DROP TABLE IF EXISTS `Comment`;
 DROP TABLE IF EXISTS `Post`;
 DROP TABLE IF EXISTS `Category`;
 DROP TABLE IF EXISTS `SiteStat`;
+DROP TABLE IF EXISTS `DailyVisit`;
+DROP TABLE IF EXISTS `Setting`;
+DROP TABLE IF EXISTS `visitorlog`;
 DROP TABLE IF EXISTS `User`;
+SET FOREIGN_KEY_CHECKS = 1;
 
 CREATE TABLE `User` (
   `id` INT NOT NULL AUTO_INCREMENT,
@@ -64,6 +69,26 @@ CREATE TABLE `DailyVisit` (
   `updatedAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3),
   PRIMARY KEY (`id`),
   UNIQUE KEY `DailyVisit_date_key` (`date`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+-- Table structure for table `visitorlog`
+-- --------------------------------------------------------
+
+CREATE TABLE `visitorlog` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `ip` VARCHAR(191) NOT NULL,
+  `country` VARCHAR(191) NOT NULL DEFAULT 'Unknown',
+  `countryCode` VARCHAR(10) NOT NULL DEFAULT 'XX',
+  `city` VARCHAR(191) DEFAULT NULL,
+  `path` VARCHAR(191) NOT NULL DEFAULT '/',
+  `date` VARCHAR(191) NOT NULL,
+  `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+  PRIMARY KEY (`id`),
+  KEY `visitorlog_ip_idx` (`ip`),
+  KEY `visitorlog_date_idx` (`date`),
+  KEY `visitorlog_countryCode_idx` (`countryCode`),
+  KEY `visitorlog_createdAt_idx` (`createdAt`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------

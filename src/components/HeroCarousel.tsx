@@ -4,7 +4,8 @@ import * as React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import type { PostSummary } from "@/types";
-import { formatDate } from "@/lib/utils";
+import { formatDate, stripHtml } from "@/lib/utils";
+import { formatCoverImageUrl } from "@/lib/imageHelper";
 import {
   Sparkles,
   Clock,
@@ -39,7 +40,8 @@ export function HeroCarousel({ posts }: HeroCarouselProps) {
   if (!posts || posts.length === 0) return null;
 
   const currentPost = posts[currentIndex] || posts[0];
-  const directCover = currentPost.coverImage?.trim() || null;
+  const formattedCover = formatCoverImageUrl(currentPost.coverImage);
+  const directCover = formattedCover?.trim() || null;
   const videoThumb = getVideoThumbnail(currentPost.videoUrl);
   const isImageFailed = Boolean(failedImages[currentIndex]);
   const activeImage = !isImageFailed && directCover ? directCover : videoThumb;
@@ -95,7 +97,7 @@ export function HeroCarousel({ posts }: HeroCarouselProps) {
 
             {/* Rich Summary / Description (Clean Layout: NO HASHTAGS) */}
             <p className="text-sm sm:text-base text-zinc-600 dark:text-zinc-400 font-sans leading-relaxed line-clamp-3">
-              {currentPost.summary}
+              {stripHtml(currentPost.summary)}
             </p>
           </div>
 
@@ -152,7 +154,7 @@ export function HeroCarousel({ posts }: HeroCarouselProps) {
         <div className="w-full lg:w-[420px] shrink-0">
           <Link
             href={`/posts/${currentPost.slug}`}
-            className="group relative block aspect-16/10 w-full overflow-hidden rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-900 shadow-xs cursor-pointer"
+            className="group relative block aspect-[16/10] w-full min-h-[220px] sm:min-h-[260px] overflow-hidden rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-900 shadow-xs cursor-pointer"
             title={`Read "${currentPost.title}"`}
           >
             {activeImage ? (

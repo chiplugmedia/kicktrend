@@ -3,6 +3,7 @@ import type { PostSummary } from "@/types";
 import type { SocialLinks } from "@/app/actions/setting-actions";
 import { FolderTree, Sparkles } from "lucide-react";
 import { AdBanner } from "@/components/AdBanner";
+import { stripHtml } from "@/lib/utils";
 
 function XIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
@@ -158,7 +159,7 @@ export function SiteSidebar({
 
               {/* Description */}
               <p className="text-xs text-zinc-600 dark:text-zinc-400 line-clamp-2 font-sans leading-relaxed">
-                {post.summary}
+                {stripHtml(post.summary)}
               </p>
 
               {/* Posted by [username] */}

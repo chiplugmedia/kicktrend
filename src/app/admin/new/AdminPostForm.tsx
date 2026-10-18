@@ -7,6 +7,7 @@ import { VideoEmbed } from "@/components/VideoEmbed";
 import { TiptapEditor } from "@/components/TiptapEditor";
 import { ArticleContentRenderer } from "@/components/ArticleContentRenderer";
 import { formatCoverImageUrl, extractCoverImageFilename } from "@/lib/imageHelper";
+import { stripHtml } from "@/lib/utils";
 import {
   Send,
   Save,
@@ -60,7 +61,7 @@ export function AdminPostForm({
   // Form State
   const [title, setTitle] = React.useState(initialPost?.title || "");
   const [slug, setSlug] = React.useState(initialPost?.slug || "");
-  const [summary, setSummary] = React.useState(initialPost?.summary || "");
+  const [summary, setSummary] = React.useState(stripHtml(initialPost?.summary || ""));
   const [content, setContent] = React.useState(initialPost?.content || "");
   const [coverImage, setCoverImage] = React.useState(initialPost?.coverImage || "");
   const [videoUrl, setVideoUrl] = React.useState(initialPost?.videoUrl || "");
@@ -152,7 +153,9 @@ export function AdminPostForm({
     setErrorMsg(null);
     setSuccessMsg(null);
 
-    if (!title.trim() || !summary.trim() || !content.trim()) {
+    const cleanSummary = stripHtml(summary);
+
+    if (!title.trim() || !cleanSummary.trim() || !content.trim()) {
       setErrorMsg("Title, summary, and content are required fields.");
       return;
     }
@@ -164,7 +167,7 @@ export function AdminPostForm({
         const res = await updatePostAction(initialPost.id, {
           title,
           slug: slug.trim() || undefined,
-          summary,
+          summary: cleanSummary,
           content,
           coverImage: coverImage.trim() || undefined,
           videoUrl: videoUrl.trim() || undefined,
@@ -189,7 +192,7 @@ export function AdminPostForm({
         const res = await createPostAction({
           title,
           slug: slug.trim() || undefined,
-          summary,
+          summary: cleanSummary,
           content,
           coverImage: coverImage.trim() || undefined,
           videoUrl: videoUrl.trim() || undefined,
@@ -269,15 +272,14 @@ export function AdminPostForm({
             <h2 className="text-3xl font-bold font-mono tracking-tight text-zinc-900 dark:text-zinc-100 mt-2">
               {title || "Untitled Dispatch"}
             </h2>
-            <div
-              className="text-zinc-600 dark:text-zinc-400 mt-2 text-base"
-              dangerouslySetInnerHTML={{ __html: summary || "No summary provided." }}
-            />
+            <p className="text-zinc-600 dark:text-zinc-400 mt-2 text-base leading-relaxed">
+              {stripHtml(summary) || "No summary provided."}
+            </p>
           </div>
 
           {/* Featured Cover Image */}
           {coverImage && (
-            <div className="relative aspect-16/9 w-full rounded-lg overflow-hidden my-4 bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-xs">
+            <div className="relative aspect-video sm:aspect-[16/9] min-h-[220px] sm:min-h-[300px] w-full rounded-lg overflow-hidden my-4 bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-xs">
               <img
                 src={formatCoverImageUrl(coverImage) || ""}
                 alt={title}
@@ -361,16 +363,23 @@ export function AdminPostForm({
             </div>
           </div>
 
-          {/* Rich Description / Summary */}
+          {/* Plain Text Description / Summary */}
           <div>
-            <label className="block text-xs font-mono font-medium text-zinc-700 dark:text-zinc-300 mb-1.5">
-              Summary / Short Description * (Tiptap Rich Text)
-            </label>
-            <TiptapEditor
-              mode="summary"
+            <div className="flex items-center justify-between mb-1.5">
+              <label className="block text-xs font-mono font-medium text-zinc-700 dark:text-zinc-300">
+                Summary / Short Description * (Plain Text)
+              </label>
+              <span className="text-[10px] font-mono text-zinc-400">
+                Shown on cards & carousels (no HTML)
+              </span>
+            </div>
+            <textarea
+              required
+              rows={3}
               value={summary}
-              onChange={setSummary}
-              placeholder="A brief 1-2 sentence synopsis..."
+              onChange={(e) => setSummary(e.target.value)}
+              placeholder="A brief 1-2 sentence synopsis of this article..."
+              className="w-full px-3.5 py-2.5 text-sm rounded-md bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-zinc-900 dark:text-zinc-100 font-sans focus:outline-none focus:ring-1 focus:ring-black dark:focus:ring-white resize-y leading-relaxed"
             />
           </div>
 

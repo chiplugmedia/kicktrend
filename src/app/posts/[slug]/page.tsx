@@ -261,7 +261,7 @@ export default async function PostDetailPage({ params }: PostPageProps) {
 
           {/* Featured Cover Image: Always displayed when present */}
           {displayCoverImage && (
-            <div className="relative aspect-16/9 w-full overflow-hidden rounded-xl bg-zinc-100 dark:bg-zinc-900 mb-8 border border-zinc-200 dark:border-zinc-800 shadow-xs">
+            <div className="relative aspect-video sm:aspect-[16/9] min-h-[260px] sm:min-h-[380px] w-full overflow-hidden rounded-xl bg-zinc-100 dark:bg-zinc-900 mb-8 border border-zinc-200 dark:border-zinc-800 shadow-xs">
               <Image
                 src={displayCoverImage}
                 alt={post.title}

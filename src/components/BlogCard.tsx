@@ -4,7 +4,8 @@ import * as React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Play, Heart, MessageSquare, Clock } from "lucide-react";
-import { formatDate } from "@/lib/utils";
+import { formatDate, stripHtml } from "@/lib/utils";
+import { formatCoverImageUrl } from "@/lib/imageHelper";
 import type { PostSummary } from "@/types";
 
 import { getVideoThumbnail } from "@/lib/socialEmbedHelper";
@@ -15,7 +16,8 @@ interface BlogCardProps {
 
 export function BlogCard({ post }: BlogCardProps) {
   const [imageError, setImageError] = React.useState(false);
-  const directCover = post.coverImage?.trim() || null;
+  const formattedCover = formatCoverImageUrl(post.coverImage);
+  const directCover = formattedCover?.trim() || null;
   const videoThumb = getVideoThumbnail(post.videoUrl);
   const displayImage = !imageError && directCover ? directCover : videoThumb;
 
@@ -73,7 +75,7 @@ export function BlogCard({ post }: BlogCardProps) {
 
         {/* Summary */}
         <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400 line-clamp-3 font-normal leading-relaxed">
-          {post.summary}
+          {stripHtml(post.summary)}
         </p>
 
         {/* Hashtags */}

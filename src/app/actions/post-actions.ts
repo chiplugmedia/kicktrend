@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { requireAdmin, requireAuthorOrAdmin, requireAuthor } from "@/lib/auth";
-import { calculateReadTime, slugify } from "@/lib/utils";
+import { calculateReadTime, slugify, stripHtml } from "@/lib/utils";
 import { extractCoverImageFilename, formatCoverImageUrl } from "@/lib/imageHelper";
 import type { PostSummary } from "@/types";
 
@@ -145,7 +145,7 @@ export async function createPostAction(formData: {
       data: {
         title: formData.title.trim(),
         slug: computedSlug,
-        summary: formData.summary.trim(),
+        summary: stripHtml(formData.summary),
         content: formData.content.trim(),
         coverImage: extractCoverImageFilename(formData.coverImage),
         videoUrl: formData.videoUrl?.trim() || null,
@@ -280,7 +280,7 @@ export async function updatePostAction(
       data: {
         title: formData.title.trim(),
         slug: computedSlug,
-        summary: formData.summary.trim(),
+        summary: stripHtml(formData.summary),
         content: formData.content.trim(),
         coverImage:
           formData.coverImage !== undefined
